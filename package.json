@@ -1,0 +1,14 @@
+{
+  "name": "tech-spike",
+  "version": "1.0.0",
+  "description": "Technical spike into possibilities for the Continental project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "stomp-client": "^0.9.0"
+  }
+}
