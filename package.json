@@ -9,6 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "amqp10": "^3.5.3",
     "stomp-client": "^0.9.0"
   }
 }
