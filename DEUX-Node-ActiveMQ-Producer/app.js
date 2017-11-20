@@ -20,8 +20,8 @@ var destination = 'queue://test';
             var i = 0;
 
             setInterval(() => {
-                for (cnt = 0; cnt < 1000; i++, cnt++) {
-                    sender.send({ "id": i, "text": "Message no: " + i.toString() });
+                for (cnt = 0; cnt < 100; i++, cnt++) {
+                    sender.send(JSON.stringify({ "id": i, "text": "Message no: " + i.toString() }));
                 }
     
 

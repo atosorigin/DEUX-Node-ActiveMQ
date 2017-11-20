@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "amqp10": "^3.5.3",
+    "mongoose": "^4.13.4",
     "stomp-client": "^0.9.0"
   }
 }

@@ -1,6 +1,9 @@
 var Stomp = require('stomp-client'); // The STOMP Client for interacting with ActiveMQ
 var AMQPClient = require('amqp10').Client
 var Promise = require('bluebird');
+var mongoose = require('mongoose');
+mongoose.Promise = Promise;
+var db_uri = 'mongodb://localhost/amqp-test';
 
 var controller = require('./example-summarization-controller');
 
@@ -25,8 +28,8 @@ if (cluster.isMaster) {
 
     var Policy = require("amqp10").Policy;
     var client = new AMQPClient(Policy.Utils.RenewOnSettle(5, 2, Policy.ActiveMQ));
-
-    client.connect("amqp://localhost:5672", { 'saslMechanism': 'ANONYMOUS' })
+    mongoose.connect(db_uri, { useMongoClient: true })
+        .then(() => client.connect("amqp://localhost:5672", { 'saslMechanism': 'ANONYMOUS' }))
         .catch((e) => { console.log("ERROR") })
         .then(function () {
             return client.createReceiver(destination);
@@ -34,10 +37,14 @@ if (cluster.isMaster) {
         .then(function (receiver) {
             receiver.on('errorReceived', function (err) { });
             receiver.on('message', function (message) {
-                console.log(`Worker[${process.pid}] - Processing message: ${message.body.text}`)
-                controller.testFunction().then(() => {
+                console.log(`Worker[${process.pid}] - Processing message: ${message.body}`)
+                controller.testFunction(message.body).then(() => {
                     console.log(`Worker[${process.pid}] - Finished processing message`)
                     receiver.accept(message);
+                }).catch((err) => {
+                    // These has been an error - reject this message.
+                    console.log("Rejecting message: " + err);
+                    receiver.reject(message);
                 })
             });
         });
