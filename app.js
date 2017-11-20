@@ -24,7 +24,7 @@ if (cluster.isMaster) {
 } else {
 
     var Policy = require("amqp10").Policy;
-    var client = new AMQPClient(Policy.Utils.RenewOnSettle(1, 1, Policy.ActiveMQ));
+    var client = new AMQPClient(Policy.Utils.RenewOnSettle(5, 2, Policy.ActiveMQ));
 
     client.connect("amqp://localhost:5672", { 'saslMechanism': 'ANONYMOUS' })
         .catch((e) => { console.log("ERROR") })
@@ -34,7 +34,7 @@ if (cluster.isMaster) {
         .then(function (receiver) {
             receiver.on('errorReceived', function (err) { });
             receiver.on('message', function (message) {
-                console.log(`Worker[${process.pid}] - Processing message: ${message.body}`)
+                console.log(`Worker[${process.pid}] - Processing message: ${message.body.text}`)
                 controller.testFunction().then(() => {
                     console.log(`Worker[${process.pid}] - Finished processing message`)
                     receiver.accept(message);
